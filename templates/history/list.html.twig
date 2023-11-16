@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if history is not empty %}
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Lp.</th>
+                    <th>Temperatura</th>
+                    <th>Zachmurzenie</th>
+                    <th>Wiatr</th>
+                    <th>Opis</th>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                    <th>Miasto</th>
+                    <th>Data</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for hisory in history %}
+                    <tr>
+                        <td>{{ hisory.id }}</td>
+                        <td>{{ hisory.temperature }}</td>
+                        <td>{{ hisory.cloudiness }}</td>
+                        <td>{{ hisory.wind }}</td>
+                        <td>{{ hisory.description }}</td>
+                        <td>{{ hisory.longitude }}</td>
+                        <td>{{ hisory.latitude }}</td>
+                        <td>{{ hisory.city }}</td>
+                        <td>{{ hisory.createdAt|date("d/m/Y")}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination justify-content-center">
+            {{ knp_pagination_render(history) }}
+        </div>
+
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Minimalna temperatura.</th>
+                    <th>Maksymalna temperatura</th>
+                    <th>Średnia temperatura</th>
+                    <th>Najczęściej wyszukiwane miasto</th>
+                    <th>Łacznie</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for statistic in statistics %}
+                    <tr>
+                        <td>{{ statistic.minTemperature }}</td>
+                        <td>{{ statistic.maxTemperature }}</td>
+                        <td>{{ statistic.avgTemperature }}</td>
+                        <td>{{ statistic.mostSearchedCity }}</td>
+                        <td>{{ statistic.totalSearches }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <form action="{{ path('index') }}" method="GET" class="form-horizontal">
+                <h1 class="mt-5">No search history</h1><br>
+                <button type="submit" class="btn btn-success">Fix it</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

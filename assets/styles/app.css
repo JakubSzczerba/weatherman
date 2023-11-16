@@ -1,0 +1,7 @@
+body {
+    background-color: lightgray;
+}
+
+.pagination a {
+    margin: 0 5px;
+}

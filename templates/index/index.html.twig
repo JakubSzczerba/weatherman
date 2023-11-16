@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="map" style="height: 700px; width: 100%;"></div>
+
+    <!-- Loading modal -->
+    {% include 'modal/loading.html.twig' %}
+
+    <!-- History -->
+    {% include 'modal/information.html.twig' %}
+
+    <!-- Not load -->
+    {% include 'modal/failure.html.twig' %}
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap">
+    </script>
+
+    <script>
+        let marker;
+
+        function initMap() {
+            const myLatLng = {lat: 52.2297, lng: 21.0122};
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 6,
+                center: myLatLng,
+            });
+
+            marker = new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: "Hello World!",
+                draggable: true,
+            });
+
+            map.addListener('click', (event) => {
+                moveMarker(event.latLng, map);
+            });
+        }
+
+        function moveMarker(location, map) {
+            marker.setPosition(location);
+            updateServer(location);
+        }
+
+        function updateServer(location) {
+            const url = '/';
+            $('#loadingModal').modal('show');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({lat: location.lat(), lng: location.lng()}),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    $('#loadingModal').modal('hide');
+                    if (data.success) {
+                        openModalWithData(data.history);
+                    } else {
+                        $('#loadingModal').modal('hide');
+                        $('#failureModal').modal('show');
+                    }
+                })
+        }
+
+        function openModalWithData(weatherData) {
+            const modal = $('#informationModal');
+            const modalDataContainer = $('#modalData');
+
+            const informationHTML = `
+                <h2>${weatherData.city}</h2>
+                <p>[${weatherData.latitude}, ${weatherData.longitude}]</p>
+
+                <p>The weather in ${weatherData.city} is ${weatherData.description}.</p>
+
+                <div class="modal-body text-left">
+                    <strong>Details:</strong>
+                    <ul>
+                        <li><strong>Temperature:</strong> ${weatherData.temperature} °C</li>
+                        <li><strong>Cloudiness:</strong> ${weatherData.cloudiness}</li>
+                        <li><strong>Wind:</strong> ${weatherData.wind}</li>
+                    </ul>
+                </div>
+            `;
+
+            modalDataContainer.html(informationHTML);
+
+            modal.modal('show');
+        }
+    </script>
+{% endblock %}
