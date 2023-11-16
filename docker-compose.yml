@@ -24,6 +24,8 @@ services:
       APP_SECRET: "2ce9f2327fbe8ac3a9323ca51df3ffff"
       APP_HOSTNAME: "weatherman.local"
       MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+      GOOGLE_MAPS_API_KEY: "AIzaSyAHaWOMt8h1VxyjPCXXEStGnBmLbfAMduc"
+      OPEN_WEATHER_MAP_API_KEY: "2782634eed1c90284914691197d5acc4"
   nginx:
     image: nginx:1.19
     ports:
